@@ -9,6 +9,8 @@ Template: Template-for-Terraform-Mark
 1. Starting Celery
 - celery -A vmware_chatbot worker -l info -P eventlet
 
+to purge - celery -A vmware_chatbot purge
+
 2. Starting Redis (docker image)
 - docker run -d -p 6379:6379 --name vmware-redis redis
 

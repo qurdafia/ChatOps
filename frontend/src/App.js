@@ -16,15 +16,32 @@ function App() {
 
   useEffect(scrollToBottom, [messages]);
 
-  const pollStatus = (requestId) => {
+  // frontend/src/App.js
+
+// ... (inside the App component) ...
+
+const pollStatus = (requestId) => {
     const interval = setInterval(async () => {
       try {
         const response = await axios.get(`${API_URL}status/${requestId}/`);
-        const { status, output } = response.data;
+        const { status, output, vm_details } = response.data; // Destructure new data
 
         if (status === 'SUCCESS' || status === 'FAILED') {
           clearInterval(interval);
-          const finalMessage = `Request ${requestId} finished with status: ${status}. Output:\n${output}`;
+          let finalMessage = `Request ${requestId} ${status.toLowerCase()}.`;
+
+          // --- NEW: Format the success message ---
+          if (status === 'SUCCESS' && vm_details) {
+            finalMessage = `✅ VM '${vm_details.name}' created successfully!\n\n` +
+                         `   • CPU: ${vm_details.cpu} vCPUs\n` +
+                         `   • RAM: ${vm_details.memory} GB\n` +
+                         `   • IP Address: ${vm_details.ip_address}`;
+          } else if (status === 'FAILED') {
+            // For failed messages, show the log output
+            finalMessage = `❌ Request ${requestId} failed.\n\nError:\n${output}`;
+          }
+          // ------------------------------------
+
           setMessages(prev => [...prev, { sender: 'bot', text: finalMessage }]);
           setIsProcessing(false);
         }
@@ -33,8 +50,10 @@ function App() {
         console.error("Polling error:", error);
         setIsProcessing(false);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 5000);
   };
+
+// ... (rest of the component) ...
 
   const handleSubmit = async (e) => {
     e.preventDefault();

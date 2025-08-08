@@ -25,6 +25,7 @@ class ChatbotView(APIView):
             status=status.HTTP_202_ACCEPTED
         )
 
+
 class RequestStatusView(APIView):
     """
     Allows the frontend to poll for the status of a specific request.
@@ -32,10 +33,17 @@ class RequestStatusView(APIView):
     def get(self, request, request_id, *args, **kwargs):
         try:
             req = ProvisionRequest.objects.get(id=request_id)
+            # --- UPDATED to return the new fields ---
             return Response({
                 'status': req.status,
-                'output': req.terraform_output,
-                'created_at': req.created_at
+                'output': req.terraform_output, # Will be a clean message or an error log
+                'vm_details': {
+                    'name': req.vm_name,
+                    'cpu': req.cpu,
+                    'memory': req.memory,
+                    'ip_address': req.ip_address,
+                }
             })
+            # ------------------------------------
         except ProvisionRequest.DoesNotExist:
             return Response({'error': 'Request not found'}, status=status.HTTP_404_NOT_FOUND)

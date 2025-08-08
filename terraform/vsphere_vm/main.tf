@@ -44,6 +44,9 @@ resource "vsphere_virtual_machine" "vm" {
   datastore_id     = data.vsphere_datastore.datastore.id
   guest_id         = "rhel8_64Guest"
 
+  # Added this line to specify the firmware type
+  firmware = "efi"
+
   num_cpus = var.num_vcpus
   memory   = var.memory_gb * 1024
 
@@ -60,15 +63,18 @@ resource "vsphere_virtual_machine" "vm" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
-    # customize {
-    #   linux_options {
-    #     host_name = var.vm_name
-    #     domain    = "local"
-    #   }
-    # }
+    customize {
+      linux_options {
+        host_name = var.vm_name
+        domain    = "local"
+      }
+
+      network_interface {
+      }
+    }
   }
 }
 
-# output "ip_address" {
-#   value = vsphere_virtual_machine.vm.default_ip_address
-# }
+output "ip_address" {
+  value = vsphere_virtual_machine.vm.default_ip_address
+}
