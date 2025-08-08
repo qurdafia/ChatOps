@@ -1,0 +1,21 @@
+$env:VSPHERE_USER="mark.christian"
+$env:VSPHERE_PASSWORD="P@ssw0rd"
+$env:VSPHERE_SERVER="cdpvsanvc1.int.ctcdemo.com.sg"
+
+
+Template: Template-for-Terraform-Mark
+
+
+1. Starting Celery
+- celery -A vmware_chatbot worker -l info -P eventlet
+
+2. Starting Redis (docker image)
+- docker run -d -p 6379:6379 --name vmware-redis redis
+
+
+
+Using VirtualBox and Vagrant:
+
+1. Create a vagrant box for ubuntu/bento
+- vagrant init bento/ubuntu-22.04
+- vagrant up

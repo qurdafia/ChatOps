@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+venv/
+*.pyc
+
+# Django
+db.sqlite3
+*.log
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+**/secrets.auto.tfvars # <-- CRITICAL: Ignore our new secrets file

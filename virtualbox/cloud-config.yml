@@ -1,0 +1,24 @@
+#cloud-config
+# A robust script to install Guest Additions and log the output.
+
+# 1. Update all software packages
+package_update: true
+package_upgrade: true
+
+# 2. Install the tools needed to build the Guest Additions kernel modules
+packages:
+  - build-essential
+  - dkms
+  - linux-headers-generic
+
+# 3. Run the commands to install Guest Additions
+#    We will redirect all output to a log file for debugging.
+runcmd:
+  - 'exec &> /var/log/cloud-init-vbox-guest-additions.log'
+  - 'echo "--- Starting Guest Additions Installation ---"'
+  - 'mount /dev/cdrom /mnt'
+  - '/mnt/VBoxLinuxAdditions.run'
+  - 'echo "--- Installation script finished, rebooting now... ---"'
+  # The 'reboot' command will restart the entire virtual machine.
+  # This should be the last command in the script.
+  - 'reboot'
