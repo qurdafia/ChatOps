@@ -15,5 +15,5 @@ db.sqlite3
 **/secrets.auto.tfvars # <-- CRITICAL: Ignore our new secrets file
 
 # Others
-var_chat_ops.txt
+chat_ops.txt
 key_words_to_chat_.xlsx
