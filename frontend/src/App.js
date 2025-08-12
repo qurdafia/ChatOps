@@ -96,7 +96,7 @@ const pollStatus = (requestId) => {
   return (
     <div className="container">
       <header className="header">
-        <h1>Server Provisioning Assistant</h1>
+        <h1>🤖 Server Provisioning Assistant</h1>
       </header>
       <div className="chat-window">
         {messages.map((msg, index) => (

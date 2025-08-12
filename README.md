@@ -6,6 +6,7 @@ This project is a proof of concept of how to integrate a basic NLP in Python to 
 
 - Django RF and Python
 - Terraform
+- Spacy for NLP model creation
 - Redis
 - Celery
 - ReactJS
