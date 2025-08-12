@@ -12,7 +12,7 @@ db.sqlite3
 .terraform.lock.hcl
 *.tfstate
 *.tfstate.backup
-**/secrets.auto.tfvars # <-- CRITICAL: Ignore our new secrets file
+**/secrets.auto.tfvars
 
 # Others
 chat_ops.txt
