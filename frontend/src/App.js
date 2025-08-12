@@ -5,7 +5,17 @@ import './App.css';
 const API_URL = 'http://localhost:8000/api/';
 
 function App() {
-  const [messages, setMessages] = useState([]);
+
+  // Initial message
+  const initialMessage = {
+    sender: 'bot',
+    text: "Hello! I'm your self-service VM Provisioner Bot. 🤖\n\n" +
+          "You can ask me to 'create', 'provision', or 'build' a server.\n\n" +
+          "Available Sizes: Small, Medium, Large\n" +
+          "Available OS: RHEL"
+  };
+
+  const [messages, setMessages] = useState([initialMessage]);
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef(null);
@@ -65,22 +75,28 @@ const pollStatus = (requestId) => {
     setInput('');
 
     try {
+      // This is the POST request to your Django view
       const response = await axios.post(`${API_URL}chat/`, { message: input });
       const { message, request_id } = response.data;
       const botMessage = { sender: 'bot', text: `${message} (ID: ${request_id})` };
       setMessages(prev => [...prev, botMessage]);
       pollStatus(request_id);
     } catch (error) {
-      const errorMessage = { sender: 'bot', text: 'Sorry, I could not process your request.' };
+      // --- THE FIX IS HERE ---
+      // Check if the server sent a specific error message, otherwise use a generic one.
+      const errorText = error.response?.data?.error || 'Sorry, an unexpected error occurred.';
+      const errorMessage = { sender: 'bot', text: `⚠️ ${errorText}` };
+      // -----------------------
+      
       setMessages(prev => [...prev, errorMessage]);
-      setIsProcessing(false);
+      setIsProcessing(false); // Make sure to stop processing on error
     }
   };
 
   return (
     <div className="container">
       <header className="header">
-        <h1>VMware Provisioner Bot</h1>
+        <h1>Server Provisioning Assistant</h1>
       </header>
       <div className="chat-window">
         {messages.map((msg, index) => (
@@ -96,7 +112,7 @@ const pollStatus = (requestId) => {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="e.g., create a medium ubuntu server"
+          placeholder="e.g., create a medium rhel server"
           disabled={isProcessing}
         />
         <button type="submit" disabled={isProcessing}>Send</button>

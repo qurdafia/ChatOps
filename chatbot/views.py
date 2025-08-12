@@ -6,25 +6,27 @@ from .tasks import run_terraform_provision
 from .nlp import parse_provision_request
 
 class ChatbotView(APIView):
-    """
-    Receives a chat message, creates a request, and starts the background task.
-    """
     def post(self, request, *args, **kwargs):
         user_message = request.data.get('message')
         if not user_message:
             return Response({'error': 'Message not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-        vm_params = parse_provision_request(user_message)
-        req = ProvisionRequest.objects.create(user_message=user_message)
-        
-        # Start the background task with Celery
-        run_terraform_provision.delay(req.id, vm_params)
+        # --- NEW: Check for parsing errors ---
+        vm_params, error_message = parse_provision_request(user_message)
 
+        if error_message:
+            # If the parser returned an error, send it to the user and stop.
+            return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
+        # ------------------------------------
+
+        # If no error, proceed as before
+        req = ProvisionRequest.objects.create(user_message=user_message, cpu=vm_params['cpu'], memory=vm_params['memory_gb'])
+        run_terraform_provision.delay(req.id, vm_params)
+        
         return Response(
-            {'message': 'Request received. Provisioning started...', 'request_id': req.id},
+            {'message': 'Request received. Processing...', 'request_id': req.id},
             status=status.HTTP_202_ACCEPTED
         )
-
 
 class RequestStatusView(APIView):
     """
