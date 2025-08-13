@@ -11,7 +11,11 @@ function App() {
     sender: 'bot',
     text: "Hello! I'm your self-service VM Provisioner Bot. 🤖\n\n" +
           "You can ask me to 'create', 'provision', or 'build' a server.\n\n" +
-          "Available Sizes: Small, Medium, Large\n" +
+          "Available Sizes: \n\n" + 
+          "- Tiny (1 vcpu, 1 ram) \n" + 
+          "- Small (1 vcpu, 2 ram) \n" + 
+          "- Medium (2 vcpu, 4 ram) \n" + 
+          "- Large (4 vcpu, 8 ram)\n\n" +
           "Available OS: RHEL"
   };
 
